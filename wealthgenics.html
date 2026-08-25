@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Finversity — Finance Made Simple</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500&family=Jost:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --c-black:#000000;
+    --c-navy:#233d4d;
+    --c-orange:#fe7f2d;
+    --c-gray:#eaecf0;
+    --c-white:#ffffff;
+    --sidebar-w:280px;
+    --topbar-h:64px;
+  }
+
+  *{margin:0;padding:0;box-sizing:border-box;}
+
+  body{
+    font-family:'Jost', sans-serif;
+    color:var(--c-navy);
+    background:var(--c-gray);
+    overflow-x:hidden;
+  }
+
+  h1,h2,h3,h4{font-family:'Playfair Display', serif; font-weight:600;}
+
+  a{text-decoration:none; color:inherit;}
+
+  /* ---------- TOP BAR ---------- */
+  .topbar{
+    position:fixed; top:0; left:0; right:0; height:var(--topbar-h);
+    background:linear-gradient(90deg, var(--c-orange), #ff9d5c);
+    z-index:60;
+    display:flex; align-items:center; justify-content:flex-end;
+    padding:0 28px;
+  }
+  .topbar .lock{
+    width:20px; height:20px; opacity:.85; color:var(--c-black);
+    display:flex; align-items:center;
+  }
+  .hamburger{
+    display:none; margin-right:auto; background:none; border:none; cursor:pointer;
+    flex-direction:column; gap:5px; padding:6px;
+  }
+  .hamburger span{width:26px; height:3px; background:var(--c-black); border-radius:2px;}
+
+  /* ---------- SIDEBAR ---------- */
+  .sidebar{
+    position:fixed; top:0; left:0; bottom:0; width:var(--sidebar-w);
+    background:var(--c-white);
+    z-index:70;
+    display:flex; flex-direction:column;
+    box-shadow:2px 0 18px rgba(0,0,0,.06);
+    transition:transform .3s ease;
+  }
+  .brand{
+    padding:26px 26px 22px;
+    display:flex; align-items:center; gap:12px;
+    border-bottom:1px solid var(--c-gray);
+  }
+  .brand-mark{width:46px; height:46px; flex-shrink:0;}
+  .brand-text .name{
+    font-family:'Playfair Display', serif;
+    font-weight:700; font-size:1.28rem; letter-spacing:.5px;
+    color:var(--c-navy); line-height:1.1;
+  }
+  .brand-text .tag{
+    font-size:.72rem; color:var(--c-orange); letter-spacing:.5px; font-weight:500;
+  }
+
+  nav.tabs{flex:1; overflow-y:auto; padding-top:4px;}
+  .tab-btn{
+    display:block; width:100%; text-align:left;
+    padding:15px 26px; font-size:.86rem; letter-spacing:.7px;
+    background:none; border:none; border-left:3px solid transparent;
+    border-bottom:1px solid var(--c-gray);
+    color:var(--c-navy); cursor:pointer; font-family:'Jost', sans-serif; font-weight:500;
+    transition:background .2s, border-color .2s, color .2s, padding-left .2s;
+  }
+  .tab-btn:hover{background:var(--c-gray); padding-left:32px;}
+  .tab-btn.active{
+    border-left-color:var(--c-orange);
+    background:var(--c-navy); color:var(--c-white);
+  }
+
+  .sidebar-footer{
+    padding:20px 26px 26px; border-top:1px solid var(--c-gray);
+  }
+  .socials{display:flex; gap:10px; margin-bottom:14px;}
+  .socials a{
+    width:32px; height:32px; border-radius:50%; background:var(--c-navy);
+    color:var(--c-white); display:flex; align-items:center; justify-content:center;
+    font-size:.75rem; transition:background .2s;
+  }
+  .socials a:hover{background:var(--c-orange);}
+  .sidebar-footer .credit{font-size:.7rem; color:#8a97a1;}
+  .sidebar-footer .credit b{color:var(--c-orange);}
+
+  /* ---------- MAIN ---------- */
+  main{
+    margin-left:var(--sidebar-w); margin-top:var(--topbar-h);
+    min-height:calc(100vh - var(--topbar-h));
+  }
+
+  .panel{display:none; animation:fadeIn .45s ease;}
+  .panel.active{display:block;}
+  @keyframes fadeIn{from{opacity:0; transform:translateY(8px);} to{opacity:1; transform:translateY(0);}}
+
+  /* ---------- HERO (home) ---------- */
+  .hero{
+    position:relative; min-height:420px; display:flex; align-items:center; justify-content:center;
+    text-align:center; padding:40px 20px;
+    background:
+      linear-gradient(180deg, rgba(35,61,77,.88), rgba(35,61,77,.55) 55%, var(--c-gray) 100%),
+      radial-gradient(circle at 30% 20%, #2c4a5e, #16262f 70%);
+  }
+  .hero h1{
+    color:var(--c-white); font-size:2.6rem; line-height:1.35; font-weight:600;
+    max-width:780px;
+  }
+  .hero h1 span{color:var(--c-orange);}
+
+  .section{padding:60px 6vw;}
+  .section-alt{background:var(--c-white);}
+  .eyebrow{
+    display:inline-block; padding:6px 14px; border-radius:20px;
+    background:rgba(254,127,45,.12); color:var(--c-orange);
+    font-size:.72rem; letter-spacing:1.5px; font-weight:600; margin-bottom:14px;
+  }
+  .section h2{font-size:2rem; color:var(--c-navy); margin-bottom:6px;}
+  .rule{width:64px; height:3px; background:var(--c-orange); margin:16px 0 22px;}
+  .section p{line-height:1.85; color:#4b5b66; max-width:760px; margin-bottom:14px;}
+
+  .welcome-grid{display:grid; grid-template-columns:1fr 1fr; gap:50px; align-items:center;}
+  .welcome-visual{
+    background:linear-gradient(135deg, var(--c-navy), #16262f);
+    border-radius:14px; height:320px; position:relative; overflow:hidden;
+    display:flex; align-items:center; justify-content:center;
+  }
+  .welcome-visual svg{width:82%; height:auto;}
+
+  /* cards grid */
+  .cards{display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:24px; margin-top:28px;}
+  .card{
+    background:var(--c-white); border-radius:12px; padding:28px 24px;
+    border-top:4px solid var(--c-orange); box-shadow:0 6px 24px rgba(35,61,77,.08);
+    transition:transform .2s, box-shadow .2s;
+  }
+  .card:hover{transform:translateY(-6px); box-shadow:0 14px 30px rgba(35,61,77,.14);}
+  .card h3{color:var(--c-navy); font-size:1.15rem; margin-bottom:10px;}
+  .card p{font-size:.9rem; color:#5c6b75; margin:0;}
+  .card .price{font-size:1.8rem; color:var(--c-orange); font-weight:700; font-family:'Playfair Display',serif; margin:10px 0;}
+  .card ul{list-style:none; margin:14px 0 0; padding:0; font-size:.86rem; color:#4b5b66;}
+  .card ul li{padding:6px 0; border-top:1px solid var(--c-gray);}
+  .card ul li:before{content:"— "; color:var(--c-orange); font-weight:700;}
+  .card.featured{border-top-color:var(--c-navy); background:var(--c-navy);}
+  .card.featured h3, .card.featured p, .card.featured ul li{color:var(--c-white);}
+  .card.featured .price{color:var(--c-orange);}
+  .card.featured ul li{border-top-color:rgba(255,255,255,.15);}
+
+  /* table */
+  table{width:100%; border-collapse:collapse; margin-top:24px; background:var(--c-white); border-radius:10px; overflow:hidden; box-shadow:0 6px 24px rgba(35,61,77,.08);}
+  th,td{text-align:left; padding:14px 18px; font-size:.9rem;}
+  th{background:var(--c-navy); color:var(--c-white); font-weight:500; letter-spacing:.4px;}
+  tbody tr:nth-child(even){background:var(--c-gray);}
+  tbody tr td{color:#3c4b55;}
+
+  /* timeline (learning session) */
+  .sessions{margin-top:28px; display:flex; flex-direction:column; gap:0;}
+  .session{
+    display:grid; grid-template-columns:120px 1fr; gap:22px; padding:20px 0;
+    border-bottom:1px solid var(--c-gray);
+  }
+  .session .when{color:var(--c-orange); font-weight:600; font-family:'Playfair Display',serif;}
+  .session h4{color:var(--c-navy); margin-bottom:6px; font-family:'Jost',sans-serif; font-weight:600;}
+  .session p{margin:0; font-size:.88rem;}
+  .badge{
+    display:inline-block; margin-top:8px; font-size:.68rem; letter-spacing:.6px;
+    padding:3px 10px; border-radius:20px; background:var(--c-navy); color:var(--c-white);
+  }
+
+  /* forms */
+  .form-wrap{max-width:460px; background:var(--c-white); padding:36px; border-radius:14px; box-shadow:0 10px 34px rgba(35,61,77,.1); margin-top:20px; border-top:4px solid var(--c-orange);}
+  .form-wrap.wide{max-width:700px;}
+  label{display:block; font-size:.78rem; letter-spacing:.4px; color:var(--c-navy); margin:16px 0 6px; font-weight:500;}
+  input,textarea{
+    width:100%; padding:12px 14px; border:1px solid #d7dce0; border-radius:8px;
+    font-family:'Jost',sans-serif; font-size:.92rem; background:var(--c-gray); color:var(--c-navy);
+  }
+  input:focus, textarea:focus{outline:2px solid var(--c-orange); background:var(--c-white);}
+  .btn{
+    margin-top:22px; display:inline-block; background:var(--c-orange); color:var(--c-white);
+    border:none; padding:13px 30px; border-radius:8px; font-size:.9rem; font-weight:600;
+    letter-spacing:.4px; cursor:pointer; transition:background .2s, transform .2s;
+  }
+  .btn:hover{background:#e56b1c; transform:translateY(-2px);}
+  .form-note{font-size:.78rem; color:#8a97a1; margin-top:14px;}
+  .form-hint{font-size:.8rem; color:var(--c-orange); margin-top:16px; cursor:pointer;}
+
+  .contact-grid{display:grid; grid-template-columns:1fr 1fr; gap:50px;}
+  .contact-info .item{display:flex; gap:14px; margin-bottom:26px; align-items:flex-start;}
+  .contact-info .icon{
+    width:42px; height:42px; border-radius:50%; background:var(--c-navy); color:var(--c-white);
+    display:flex; align-items:center; justify-content:center; flex-shrink:0; font-size:1rem;
+  }
+  .contact-info h4{font-size:.95rem; color:var(--c-navy); margin-bottom:3px;}
+  .contact-info p{font-size:.86rem; margin:0; color:#5c6b75;}
+
+  .compliance-list{margin-top:10px;}
+  .compliance-list li{margin-bottom:14px; line-height:1.75; color:#4b5b66;}
+
+  footer{
+    background:var(--c-black); color:#c9cdd1; padding:30px 6vw; text-align:center; font-size:.8rem;
+  }
+  footer b{color:var(--c-orange);}
+
+  @media(max-width:900px){
+    .welcome-grid, .contact-grid{grid-template-columns:1fr;}
+    .sidebar{transform:translateX(-100%);}
+    .sidebar.open{transform:translateX(0);}
+    main{margin-left:0;}
+    .hamburger{display:flex;}
+    .hero h1{font-size:1.9rem;}
+  }
+</style>
+</head>
+<body>
+
+  <div class="topbar">
+    <button class="hamburger" id="hamburger" aria-label="Toggle menu"><span></span><span></span><span></span></button>
+    <svg class="lock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="11" width="16" height="9" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>
+  </div>
+
+  <aside class="sidebar" id="sidebar">
+    <div class="brand">
+      <svg class="brand-mark" viewBox="0 0 100 100">
+        <polygon points="10,15 30,15 50,60 70,15 90,15 60,85 40,85" fill="#233d4d"/>
+        <polygon points="30,15 50,60 40,85 10,15" fill="#fe7f2d"/>
+      </svg>
+      <div class="brand-text">
+        <div class="name">FINVERSITY</div>
+        <div class="tag">Finance made simple</div>
+      </div>
+    </div>
+
+    <nav class="tabs" id="tabs">
+      <button class="tab-btn active" data-tab="home">HOME</button>
+      <button class="tab-btn" data-tab="about">ABOUT US</button>
+      <button class="tab-btn" data-tab="courses">COURSES OFFERED</button>
+      <button class="tab-btn" data-tab="financial">FINANCIAL DETAILS</button>
+      <button class="tab-btn" data-tab="learning">LEARNING SESSION</button>
+      <button class="tab-btn" data-tab="price">COURSE PRICE</button>
+      <button class="tab-btn" data-tab="login">LOGIN</button>
+      <button class="tab-btn" data-tab="compliance">COMPLIANCE</button>
+      <button class="tab-btn" data-tab="contact">CONTACT US</button>
+    </nav>
+
+    <div class="sidebar-footer">
+      <div class="socials">
+        <a href="#" aria-label="Twitter">𝕏</a>
+        <a href="#" aria-label="Facebook">f</a>
+        <a href="#" aria-label="YouTube">▶</a>
+        <a href="#" aria-label="LinkedIn">in</a>
+      </div>
+      <div class="credit">Developed by <b>Finversity Labs</b></div>
+    </div>
+  </aside>
+
+  <main>
+
+    <!-- HOME -->
+    <section class="panel active" id="home">
+      <div class="hero">
+        <h1>Financial Planning &amp;<br><span>Wealth Management</span></h1>
+      </div>
+      <div class="section section-alt">
+        <div class="welcome-grid">
+          <div class="welcome-visual">
+            <svg viewBox="0 0 300 220">
+              <circle cx="150" cy="110" r="70" fill="none" stroke="#fe7f2d" stroke-width="2" opacity=".6"/>
+              <circle cx="150" cy="110" r="40" fill="#fe7f2d" opacity=".85"/>
+              <circle cx="80" cy="60" r="10" fill="#eaecf0"/>
+              <circle cx="230" cy="70" r="14" fill="#eaecf0"/>
+              <circle cx="230" cy="160" r="8" fill="#eaecf0"/>
+              <line x1="150" y1="110" x2="80" y2="60" stroke="#eaecf0" stroke-width="1.5"/>
+              <line x1="150" y1="110" x2="230" y2="70" stroke="#eaecf0" stroke-width="1.5"/>
+              <line x1="150" y1="110" x2="230" y2="160" stroke="#eaecf0" stroke-width="1.5"/>
+            </svg>
+          </div>
+          <div>
+            <div class="eyebrow">WELCOME</div>
+            <h2>Welcome To <span style="color:var(--c-orange)">Finversity</span></h2>
+            <div class="rule"></div>
+            <p>Finversity intends to impart knowledge that is essential for creating wealth.</p>
+            <p><strong>Finversity — The Genetics of Wealth.</strong></p>
+            <p>Our platform explores and utilizes every possibility, leading to a fusion of the latest market trends, mentoring by industry veterans, and age-old principles of synergy — so every learner builds a plan that actually compounds.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ABOUT -->
+    <section class="panel" id="about">
+      <div class="section">
+        <div class="eyebrow">ABOUT US</div>
+        <h2>Built by practitioners, taught like mentors</h2>
+        <div class="rule"></div>
+        <p>Finversity was founded on a simple belief: financial literacy shouldn't be locked behind jargon or reserved for professionals. We translate real market experience into practical, usable education for everyday investors.</p>
+        <p>Our faculty has spent decades across equity research, wealth advisory, and compliance — and now spend their time teaching the next generation of disciplined, informed investors.</p>
+        <div class="cards">
+          <div class="card">
+            <h3>Our Mission</h3>
+            <p>Make sound financial planning accessible, practical, and personal — one learner at a time.</p>
+          </div>
+          <div class="card">
+            <h3>Our Approach</h3>
+            <p>Blend live market context with time-tested principles, mentored by practitioners who still work in the field.</p>
+          </div>
+          <div class="card">
+            <h3>Our Promise</h3>
+            <p>No hype, no shortcuts — just structured learning paths that build real financial confidence.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- COURSES -->
+    <section class="panel" id="courses">
+      <div class="section section-alt">
+        <div class="eyebrow">COURSES OFFERED</div>
+        <h2>Pick a path that fits your goals</h2>
+        <div class="rule"></div>
+        <p>Every course is cohort-based, mentor-led, and built around real portfolios — not just theory.</p>
+        <div class="cards">
+          <div class="card">
+            <h3>Personal Finance Foundations</h3>
+            <p>Budgeting, emergency funds, insurance, and debt management for a stable financial base.</p>
+          </div>
+          <div class="card">
+            <h3>Equity &amp; Market Fundamentals</h3>
+            <p>Read markets, evaluate businesses, and build a disciplined stock-picking framework.</p>
+          </div>
+          <div class="card">
+            <h3>Wealth Management Mastery</h3>
+            <p>Portfolio construction, asset allocation, and long-horizon wealth-building strategy.</p>
+          </div>
+          <div class="card">
+            <h3>Retirement &amp; Tax Planning</h3>
+            <p>Structure withdrawals, optimize tax efficiency, and plan for a comfortable retirement.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- FINANCIAL DETAILS -->
+    <section class="panel" id="financial">
+      <div class="section">
+        <div class="eyebrow">FINANCIAL DETAILS</div>
+        <h2>Transparent, plain-language disclosures</h2>
+        <div class="rule"></div>
+        <p>Every fee, refund policy, and payment option is laid out up front — no fine print surprises.</p>
+        <table>
+          <thead><tr><th>Item</th><th>Detail</th><th>Notes</th></tr></thead>
+          <tbody>
+            <tr><td>Payment modes</td><td>Card, UPI, Net Banking</td><td>Processed via secure gateway</td></tr>
+            <tr><td>Refund window</td><td>7 days from enrollment</td><td>Before session 2 begins</td></tr>
+            <tr><td>Installments</td><td>Available on Pro &amp; Elite</td><td>0% interest, 3-month plan</td></tr>
+            <tr><td>Currency</td><td>INR / USD</td><td>Auto-converted at checkout</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- LEARNING SESSION -->
+    <section class="panel" id="learning">
+      <div class="section section-alt">
+        <div class="eyebrow">LEARNING SESSION</div>
+        <h2>How the sessions run</h2>
+        <div class="rule"></div>
+        <p>Live, mentor-led sessions with recordings available for every enrolled learner.</p>
+        <div class="sessions">
+          <div class="session">
+            <div class="when">Week 1</div>
+            <div>
+              <h4>Orientation &amp; Goal Mapping</h4>
+              <p>Define your financial goals and risk profile with your mentor.</p>
+              <span class="badge">LIVE</span>
+            </div>
+          </div>
+          <div class="session">
+            <div class="when">Week 2–4</div>
+            <div>
+              <h4>Core Concepts</h4>
+              <p>Markets, instruments, and the mathematics of compounding.</p>
+              <span class="badge">LIVE + RECORDED</span>
+            </div>
+          </div>
+          <div class="session">
+            <div class="when">Week 5–6</div>
+            <div>
+              <h4>Applied Portfolio Lab</h4>
+              <p>Build and stress-test a real portfolio in guided workshops.</p>
+              <span class="badge">LIVE</span>
+            </div>
+          </div>
+          <div class="session">
+            <div class="when">Week 7</div>
+            <div>
+              <h4>1:1 Mentor Review</h4>
+              <p>Personal feedback session and a forward plan for the next 12 months.</p>
+              <span class="badge">1:1</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- COURSE PRICE -->
+    <section class="panel" id="price">
+      <div class="section">
+        <div class="eyebrow">COURSE PRICE</div>
+        <h2>Simple, transparent pricing</h2>
+        <div class="rule"></div>
+        <p>Choose the plan that matches how deep you want to go.</p>
+        <div class="cards">
+          <div class="card">
+            <h3>Basic</h3>
+            <div class="price">₹4,999</div>
+            <p>Self-paced core curriculum</p>
+            <ul>
+              <li>Foundations course</li>
+              <li>Recorded sessions</li>
+              <li>Community forum access</li>
+            </ul>
+          </div>
+          <div class="card featured">
+            <h3>Pro</h3>
+            <div class="price">₹12,999</div>
+            <p>Live cohort + mentoring</p>
+            <ul>
+              <li>Everything in Basic</li>
+              <li>Live weekly sessions</li>
+              <li>Portfolio lab access</li>
+              <li>Group mentor Q&amp;A</li>
+            </ul>
+          </div>
+          <div class="card">
+            <h3>Elite</h3>
+            <div class="price">₹24,999</div>
+            <p>Full mentorship track</p>
+            <ul>
+              <li>Everything in Pro</li>
+              <li>1:1 mentor reviews</li>
+              <li>Custom portfolio plan</li>
+              <li>Priority support</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- LOGIN -->
+    <section class="panel" id="login">
+      <div class="section section-alt">
+        <div class="eyebrow">LOGIN</div>
+        <h2>Welcome back</h2>
+        <div class="rule"></div>
+        <form class="form-wrap" onsubmit="return false;">
+          <label for="log-email">Email address</label>
+          <input id="log-email" type="email" placeholder="you@example.com">
+          <label for="log-pass">Password</label>
+          <input id="log-pass" type="password" placeholder="••••••••">
+          <button class="btn" type="submit">Log In</button>
+          <div class="form-hint">Forgot password?</div>
+          <p class="form-note">New to Finversity? Enroll from the Courses Offered tab to create an account.</p>
+        </form>
+      </div>
+    </section>
+
+    <!-- COMPLIANCE -->
+    <section class="panel" id="compliance">
+      <div class="section">
+        <div class="eyebrow">COMPLIANCE</div>
+        <h2>Regulatory &amp; educational disclosures</h2>
+        <div class="rule"></div>
+        <ul class="compliance-list">
+          <li>Finversity is an educational platform. Content is for learning purposes only and does not constitute individualized investment advice.</li>
+          <li>Past performance discussed in any course is illustrative and not indicative of future returns.</li>
+          <li>Learners should consult a licensed financial advisor before acting on any strategy taught here.</li>
+          <li>All learner data is handled in accordance with our privacy policy and is never sold to third parties.</li>
+          <li>Course mentors disclose any relevant conflicts of interest at the start of each session.</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- CONTACT -->
+    <section class="panel" id="contact">
+      <div class="section section-alt">
+        <div class="eyebrow">CONTACT US</div>
+        <h2>Let's talk wealth</h2>
+        <div class="rule"></div>
+        <div class="contact-grid">
+          <div class="contact-info">
+            <div class="item">
+              <div class="icon">@</div>
+              <div><h4>Email</h4><p>hello@Finversity.com</p></div>
+            </div>
+            <div class="item">
+              <div class="icon">☎</div>
+              <div><h4>Phone</h4><p>+91 98765 43210</p></div>
+            </div>
+            <div class="item">
+              <div class="icon">📍</div>
+              <div><h4>Office</h4><p>Bengaluru, Karnataka, India</p></div>
+            </div>
+          </div>
+          <form class="form-wrap wide" onsubmit="return false;">
+            <label for="c-name">Full name</label>
+            <input id="c-name" type="text" placeholder="Your name">
+            <label for="c-email">Email</label>
+            <input id="c-email" type="email" placeholder="you@example.com">
+            <label for="c-msg">Message</label>
+            <textarea id="c-msg" rows="4" placeholder="How can we help?"></textarea>
+            <button class="btn" type="submit">Send Message</button>
+          </form>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer>
+    Developed by <b>Finversity Labs</b> · © 2026 Finversity. All rights reserved.
+  </footer>
+
+<script>
+  const tabs = document.querySelectorAll('.tab-btn');
+  const panels = document.querySelectorAll('.panel');
+  const sidebar = document.getElementById('sidebar');
+  const hamburger = document.getElementById('hamburger');
+
+  tabs.forEach(btn => {
+    btn.addEventListener('click', () => {
+      tabs.forEach(b => b.classList.remove('active'));
+      panels.forEach(p => p.classList.remove('active'));
+      btn.classList.add('active');
+      document.getElementById(btn.dataset.tab).classList.add('active');
+      window.scrollTo({top:0, behavior:'smooth'});
+      sidebar.classList.remove('open');
+    });
+  });
+
+  hamburger.addEventListener('click', () => sidebar.classList.toggle('open'));
+</script>
+</body>
+</html>
